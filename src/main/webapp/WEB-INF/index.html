@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Chat Page</title>
+    <style>
+        #messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        .message strong {
+            margin-right: 5px;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,16 +24,73 @@
 </div>
 
 <form id="chatForm">
+    <input type="text" id="nameInput" placeholder="Your name">
     <input type="text" id="messageInput" placeholder="Type your message...">
     <input type="submit" value="Send">
 </form>
 
 <script>
     const form = document.getElementById('chatForm');
+    const messageInput = document.getElementById('messageInput');
+    const nameInput = document.getElementById('nameInput');
+    const messagesDiv = document.getElementById('messages');
 
-    form.addEventListener('submit', function(event) {
+    function updateMessages(messages) {
+        messagesDiv.innerHTML = '';
+        messages.forEach(msg => {
+            const div = document.createElement('div');
+            div.classList.add('message');
+            div.innerHTML = `<strong>${msg.name}:</strong> ${msg.message}`;
+            messagesDiv.appendChild(div);
+        });
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function fetchMessages() {
+        try {
+            const response = await fetch('/api/messages/');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.messages) {
+                    updateMessages(data.messages);
+                }
+            } else {
+                console.error('Error fetching messages:', response.status);
+            }
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
+    }
+
+    setInterval(fetchMessages, 3000);
+    fetchMessages();
+
+    form.addEventListener('submit', async function(event) {
         event.preventDefault();
-        console.log('submit');
+
+        const name = nameInput.value.trim();
+        const message = messageInput.value.trim();
+
+        if (!name || !message) return;
+
+        const payload = { name: name, message: message };
+
+        try {
+            const response = await fetch('/api/messages/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                messageInput.value = '';
+                fetchMessages();
+            } else {
+                console.error('Error sending message:', response.status);
+            }
+        } catch (err) {
+            console.error('Fetch error:', err);
+        }
     });
 </script>
 
