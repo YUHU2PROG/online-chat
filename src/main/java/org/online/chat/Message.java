@@ -1,4 +1,4 @@
-package org.online.chat.models;
+package org.online.chat;
 
 import java.util.Objects;
 

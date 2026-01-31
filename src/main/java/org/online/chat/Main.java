@@ -1,5 +1,6 @@
 package org.online.chat;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.WebResourceRoot;
@@ -9,16 +10,14 @@ import org.apache.catalina.webresources.StandardRoot;
 
 import java.io.File;
 import java.sql.*;
+import java.util.TimeZone;
 
 public class Main {
-    public static Connection conn;
+    private final static Dotenv dotenv = Dotenv.load();
+    private static Connection conn = null;
 
     static {
-        try {
-            conn = DriverManager.getConnection("jdbc:sqlite:mydb.db");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC")); // todo understand why it doesn't work without it
     }
 
     public static void main(String[] args) throws LifecycleException {
@@ -39,5 +38,17 @@ public class Main {
 
         tomcat.start();
         tomcat.getServer().await();
+    }
+
+    public static Connection getConn() throws SQLException {
+        if (conn == null || !conn.isValid(1)) conn = createConnection();
+        return conn;
+    }
+
+    public static Connection createConnection() throws SQLException {
+        String jdbcUrl = dotenv.get("JDBC_URL");
+        String dbUser = dotenv.get("DB_USER");
+        String dbPassword = dotenv.get("DB_PASSWORD");
+        return DriverManager.getConnection(jdbcUrl, dbUser, dbPassword);
     }
 }
