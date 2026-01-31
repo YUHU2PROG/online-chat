@@ -36,6 +36,8 @@ public class MessageServlet extends HttpServlet {
                         rs.getString("message")));
             }
 
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("application/json;charset=UTF-8");
             try (PrintWriter writer = resp.getWriter()) {
                 JsonObject result = new JsonObject();
                 result.add("messages", new Gson().toJsonTree(messages));
@@ -60,6 +62,8 @@ public class MessageServlet extends HttpServlet {
             ps.setString(2, message.getMessage());
             ps.executeUpdate();
 
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            resp.setContentType("application/json;charset=UTF-8");
             try (PrintWriter writer = resp.getWriter()) {
                 JsonObject result = new JsonObject();
                 result.addProperty("status", "success");
@@ -68,6 +72,8 @@ public class MessageServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (JsonSyntaxException e) {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setContentType("application/json;charset=UTF-8");
             try (PrintWriter writer = resp.getWriter()) {
                 JsonObject result = new JsonObject();
                 result.addProperty("status", "error");
