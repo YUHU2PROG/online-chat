@@ -8,6 +8,7 @@ import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 
 import java.io.File;
+import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws LifecycleException {
@@ -28,5 +29,9 @@ public class Main {
 
         tomcat.start();
         tomcat.getServer().await();
+    }
+
+    public static Connection createConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:sqlite:mydb.db");
     }
 }
