@@ -37,8 +37,7 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### Database ###
+### online-chat ###
 mydb.db
-
-### Apache Tomcat ###
 tomcat.8080
+.env
