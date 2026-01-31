@@ -57,7 +57,7 @@ public class MessageServlet extends HttpServlet {
             }
 
             Connection conn = ((Connection) req.getAttribute("conn"));
-            PreparedStatement ps = conn.prepareStatement("INSERT INTO messages (name, message) VALUES (? ?)");
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO messages (name, message) VALUES (?, ?)");
             ps.setString(1, message.getName());
             ps.setString(2, message.getMessage());
             ps.executeUpdate();
