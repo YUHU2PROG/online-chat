@@ -1,14 +1,12 @@
-package org.online.chat.servlets;
+package org.online.chat;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.online.chat.models.Message;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,10 +22,10 @@ import java.util.stream.Collectors;
 @WebServlet({"/api/messages", "/api/messages/"})
 public class MessageServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
+            Connection conn = Main.getConn();
             List<Message> messages = new ArrayList<>();
-            Connection conn = ((Connection) req.getAttribute("conn"));
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM messages");
             ResultSet rs = ps.executeQuery();
 
@@ -49,7 +47,7 @@ public class MessageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             Message message;
             try (BufferedReader reader = req.getReader()) {
@@ -58,7 +56,7 @@ public class MessageServlet extends HttpServlet {
 
             if (message.getName() == null || message.getMessage() == null) throw new JsonSyntaxException("Message is incorrect");
 
-            Connection conn = ((Connection) req.getAttribute("conn"));
+            Connection conn = Main.getConn();
             PreparedStatement ps = conn.prepareStatement("INSERT INTO messages (name, message) VALUES (?, ?)");
             ps.setString(1, message.getName());
             ps.setString(2, message.getMessage());

@@ -38,6 +38,5 @@ build/
 .DS_Store
 
 ### online-chat ###
-mydb.db
 tomcat.8080
 .env

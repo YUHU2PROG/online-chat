@@ -1,4 +1,4 @@
-package org.online.chat.servlets;
+package org.online.chat;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
