@@ -15,8 +15,8 @@ public class Message {
     }
 
     public Message(String name, String message) {
-        this.name = name;
-        this.message = message;
+        this.name = Objects.requireNonNull(name);
+        this.message = Objects.requireNonNull(message);
     }
 
     @Override
