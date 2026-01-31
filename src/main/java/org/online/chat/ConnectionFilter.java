@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ConnectionFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-        request.setAttribute("conn", Main.conn);
+        if (request.getRequestURI().startsWith("/api")) request.setAttribute("conn", Main.conn);
         chain.doFilter(request, response);
     }
 }
