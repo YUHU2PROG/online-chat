@@ -39,3 +39,6 @@ build/
 
 ### Database ###
 mydb.db
+
+### Apache Tomcat ###
+tomcat.8080
