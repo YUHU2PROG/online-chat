@@ -13,7 +13,7 @@ import java.sql.*;
 import java.util.TimeZone;
 
 public class Main {
-    private final static Dotenv dotenv = Dotenv.load();
+    private final static Dotenv dotenv = Dotenv.configure().systemProperties().ignoreIfMissing().load();
     private static Connection conn = null;
 
     static {
@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) throws LifecycleException {
         Tomcat tomcat = new Tomcat();
-        tomcat.setPort(8080);
+        tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
         Context ctx = tomcat.addWebapp("", new File("src/main/webapp/").getAbsolutePath());
 
