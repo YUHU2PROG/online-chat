@@ -34,7 +34,7 @@ public class Main {
         ctx.setResources(resources);
 
         tomcat.enableNaming();
-        tomcat.getConnector();
+        tomcat.getConnector().setProperty("address", "0.0.0.0");
 
         tomcat.start();
         tomcat.getServer().await();
