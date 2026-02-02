@@ -24,12 +24,12 @@ public class Main {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
-        Context ctx = tomcat.addWebapp("", new File("src/main/resources/webapp").getAbsolutePath());
+        Context ctx = tomcat.addWebapp("", new File(".").getAbsolutePath());
 
         WebResourceRoot resources = new StandardRoot(ctx);
         resources.addJarResources(
                 new JarResourceSet(resources, "/WEB-INF/classes",
-                        new File("target/classes").getAbsolutePath(), "/")
+                        new File("target/online-chat-1.0-SNAPSHOT.jar").getAbsolutePath(), "/")
         );
         ctx.setResources(resources);
 
