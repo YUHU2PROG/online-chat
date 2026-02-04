@@ -24,11 +24,18 @@
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.online.chat.Main</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
+                                    <resource>target/classes</resource>
+                                    <file>webapp/WEB-INF/classes</file>
                                 </transformer>
                             </transformers>
                             <filters>
@@ -49,8 +56,9 @@
 
         <resources>
             <resource>
-                <directory>src/main/resources/webapp</directory>
+                <directory>src/main/webapp</directory>
                 <targetPath>webapp</targetPath>
+                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
