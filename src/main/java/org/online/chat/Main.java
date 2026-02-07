@@ -1,10 +1,13 @@
 package org.online.chat;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
-import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.TimeZone;
 
@@ -20,11 +23,18 @@ public class Main {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC")); // todo understand why it doesn't work without it
     }
 
-    public static void main(String[] args) throws LifecycleException {
+    public static void main(String[] args) throws LifecycleException, URISyntaxException {
+        Path jarPath = Paths.get(
+                Main.class.getProtectionDomain().
+                        getCodeSource().
+                        getLocation().
+                        toURI()
+        );
+
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
-        tomcat.addWebapp("", new File("src/main/webapp").getAbsolutePath());
+        Context ctx = tomcat.addContext("", null);
 
         tomcat.enableNaming(); // todo
         tomcat.getConnector().setProperty("address", "0.0.0.0");
