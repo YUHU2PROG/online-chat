@@ -3,38 +3,65 @@ package org.online.chat;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.webresources.DirResourceSet;
+import org.apache.catalina.webresources.JarResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.tomcat.util.http.parser.Host;
 
-import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.TimeZone;
 
 public class Main {
-    private final static Dotenv dotenv = Dotenv.load();
+    public final static Dotenv dotenv = Dotenv.configure().
+            ignoreIfMissing().
+            systemProperties().
+            load();
+
     private static Connection conn = null;
 
     static {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC")); // todo understand why it doesn't work without it
     }
 
-    public static void main(String[] args) throws LifecycleException {
+    public static void main(String[] args) throws LifecycleException, URISyntaxException {
+        String jarPath = Paths.get(
+                Main.class.getProtectionDomain().
+                        getCodeSource().
+                        getLocation().
+                        toURI()
+        ).toFile().getAbsolutePath(); // todo
+
         Tomcat tomcat = new Tomcat();
-        tomcat.setPort(8080);
+        tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
-        Context ctx = tomcat.addWebapp("", new File("src/main/webapp/").getAbsolutePath());
+        Context ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
 
-        WebResourceRoot resources = new StandardRoot(ctx);
-        resources.addPreResources(
-                new DirResourceSet(resources, "/WEB-INF/classes",
-                        new File("target/classes").getAbsolutePath(), "/")
+        StandardRoot resources = new StandardRoot(ctx);
+        resources.addJarResources(
+                new JarResourceSet(
+                        resources,
+                        "/WEB-INF/classes",
+                        jarPath,
+                        "/"
+                )
         );
+
+        resources.addJarResources(
+                new JarResourceSet(
+                        resources,
+                        "/",
+                        jarPath,
+                        "/webapp"
+                )
+        );
+
         ctx.setResources(resources);
 
-        tomcat.enableNaming();
-        tomcat.getConnector();
+        tomcat.enableNaming(); // todo
+        tomcat.getConnector().setProperty("address", "0.0.0.0");
 
         tomcat.start();
         tomcat.getServer().await();
