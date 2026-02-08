@@ -54,12 +54,12 @@ public class MessageServlet extends HttpServlet {
                 message = new Gson().fromJson(reader.lines().collect(Collectors.joining()), Message.class);
             }
 
-            if (message.getName() == null || message.getMessage() == null) throw new JsonSyntaxException("Message is incorrect");
+            if (message.name() == null || message.message() == null) throw new JsonSyntaxException("Message is incorrect");
 
             Connection conn = Main.getConn();
             PreparedStatement ps = conn.prepareStatement("INSERT INTO messages (name, message) VALUES (?, ?)");
-            ps.setString(1, message.getName());
-            ps.setString(2, message.getMessage());
+            ps.setString(1, message.name());
+            ps.setString(2, message.message());
             ps.executeUpdate();
 
             resp.setStatus(HttpServletResponse.SC_CREATED);
