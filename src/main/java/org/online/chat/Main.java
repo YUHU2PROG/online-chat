@@ -37,7 +37,7 @@ public class Main {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
-        Context ctx = tomcat.addWebapp(tomcat.getHost(), "", null);
+        Context ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
 
         StandardRoot resources = new StandardRoot(ctx);
         resources.addJarResources(
