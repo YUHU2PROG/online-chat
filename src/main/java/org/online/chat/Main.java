@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.JarResourceSet;
+import org.apache.catalina.webresources.StandardRoot;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -24,17 +26,38 @@ public class Main {
     }
 
     public static void main(String[] args) throws LifecycleException, URISyntaxException {
-        Path jarPath = Paths.get(
+        String jarPath = Paths.get(
                 Main.class.getProtectionDomain().
                         getCodeSource().
                         getLocation().
                         toURI()
-        );
+        ).toFile().getAbsolutePath(); // todo
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
         Context ctx = tomcat.addContext("", null);
+
+        StandardRoot resources = new StandardRoot(ctx);
+        resources.addJarResources(
+                new JarResourceSet(
+                        resources,
+                        "/WEB-INF/classes",
+                        jarPath,
+                        "/"
+                )
+        );
+
+        resources.addJarResources(
+                new JarResourceSet(
+                        resources,
+                        "/",
+                        jarPath,
+                        "/webapp"
+                )
+        );
+
+        ctx.setResources(resources);
 
         tomcat.enableNaming(); // todo
         tomcat.getConnector().setProperty("address", "0.0.0.0");
