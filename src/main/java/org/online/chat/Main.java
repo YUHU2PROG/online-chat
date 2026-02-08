@@ -32,10 +32,11 @@ public class Main {
                         getCodeSource().
                         getLocation().
                         toURI()
-        ).toFile().getAbsolutePath(); // todo
+        ).toFile().getAbsolutePath();
 
         Tomcat tomcat = new Tomcat();
-        tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
+        tomcat.setPort(Integer.parseInt(dotenv.get("PORT", "8080")));
+        tomcat.getConnector().setProperty("address", "0.0.0.0");
 
         Context ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
 
@@ -59,9 +60,6 @@ public class Main {
         );
 
         ctx.setResources(resources);
-
-        tomcat.enableNaming(); // todo
-        tomcat.getConnector().setProperty("address", "0.0.0.0");
 
         tomcat.start();
         tomcat.getServer().await();
