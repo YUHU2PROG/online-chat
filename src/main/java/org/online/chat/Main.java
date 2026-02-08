@@ -6,6 +6,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.JarResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
+import org.apache.tomcat.util.http.parser.Host;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -36,7 +37,7 @@ public class Main {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
-        Context ctx = tomcat.addContext("", null);
+        Context ctx = tomcat.addWebapp(tomcat.getHost(), "", null);
 
         StandardRoot resources = new StandardRoot(ctx);
         resources.addJarResources(
