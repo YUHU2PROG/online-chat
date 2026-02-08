@@ -35,8 +35,6 @@ public class MessageServlet extends HttpServlet {
                         rs.getString("message")));
             }
 
-            System.out.println(messages);
-
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json;charset=UTF-8");
             try (PrintWriter writer = resp.getWriter()) {
