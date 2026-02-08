@@ -3,13 +3,17 @@ package org.online.chat;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.JarResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class Main {
@@ -36,26 +40,38 @@ public class Main {
         tomcat.setPort(Integer.parseInt(dotenv.get("PORT", "8080")));
         tomcat.getConnector().setProperty("address", "0.0.0.0");
 
-        Context ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
+        Context ctx;
+        WebResourceRoot resources;
 
-        StandardRoot resources = new StandardRoot(ctx);
-        resources.addJarResources(
-                new JarResourceSet(
-                        resources,
-                        "/WEB-INF/classes",
-                        jarPath,
-                        "/"
-                )
-        );
-
-        resources.addJarResources(
-                new JarResourceSet(
-                        resources,
-                        "/",
-                        jarPath,
-                        "/webapp"
-                )
-        );
+        if (Objects.equals(dotenv.get("CONTEXT"), "dev")) {
+            ctx = tomcat.addWebapp("", new File("src/main/webapp/").getAbsolutePath());
+            resources = new StandardRoot(ctx);
+            resources.addPreResources(
+                    new DirResourceSet(resources, "/WEB-INF/classes",
+                            new File("target/classes").getAbsolutePath(), "/")
+            );
+        } else if (Objects.equals(dotenv.get("CONTEXT"), "prod")) {
+            ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
+            resources = new StandardRoot(ctx);
+            resources.addJarResources(
+                    new JarResourceSet(
+                            resources,
+                            "/WEB-INF/classes",
+                            jarPath,
+                            "/"
+                    )
+            );
+            resources.addJarResources(
+                    new JarResourceSet(
+                            resources,
+                            "/",
+                            jarPath,
+                            "/webapp"
+                    )
+            );
+        } else {
+            throw new IllegalArgumentException("CONTEXT should be set to dev in the development environment and prod in production.");
+        }
 
         ctx.setResources(resources);
 
