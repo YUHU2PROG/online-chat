@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,6 +35,8 @@ public class MessageServlet extends HttpServlet {
                         rs.getString("message")));
             }
 
+            System.out.println(messages);
+
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("application/json;charset=UTF-8");
             try (PrintWriter writer = resp.getWriter()) {
@@ -49,6 +52,8 @@ public class MessageServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
+            req.setCharacterEncoding(StandardCharsets.UTF_8);
+
             Message message;
             try (BufferedReader reader = req.getReader()) {
                 message = new Gson().fromJson(reader.lines().collect(Collectors.joining()), Message.class);
