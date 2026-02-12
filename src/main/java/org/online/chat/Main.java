@@ -14,7 +14,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Objects;
-import java.util.TimeZone;
 
 public class Main {
     public final static Dotenv dotenv = Dotenv.configure().
@@ -23,10 +22,6 @@ public class Main {
             load();
 
     private static Connection conn = null;
-
-    static {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC")); // todo understand why it doesn't work without it
-    }
 
     public static void main(String[] args) throws LifecycleException, URISyntaxException {
         String jarPath = Paths.get(
