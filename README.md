@@ -34,3 +34,4 @@ Before running the application, set the required environment variables:
 | DB_USER       | Database username |
 | DB_PASSWORD   | Database password |
 | CONTEXT       | Type of run: `dev` for development, `prod` for production/fat-jar |
+| PORT          | The port on which the application will be run |
