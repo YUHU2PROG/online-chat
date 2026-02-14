@@ -7,7 +7,7 @@ This project is an **online chat application written in Java**.
 ## Requirements
 
 - Java 21
-- Maven 3.6+
+- Maven 3.9+
 
 ---
 
