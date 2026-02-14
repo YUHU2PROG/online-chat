@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 public class MessageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
-            Connection conn = Main.getConn();
+        try (Connection conn = Main.getConn()) {
             List<Message> messages = new ArrayList<>();
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM messages");
             ResultSet rs = ps.executeQuery();
@@ -49,7 +48,7 @@ public class MessageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        try {
+        try (Connection conn = Main.getConn()) {
             req.setCharacterEncoding(StandardCharsets.UTF_8);
 
             Message message;
@@ -59,7 +58,6 @@ public class MessageServlet extends HttpServlet {
 
             if (message.name() == null || message.message() == null) throw new JsonSyntaxException("Message is incorrect");
 
-            Connection conn = Main.getConn();
             PreparedStatement ps = conn.prepareStatement("INSERT INTO messages (name, message) VALUES (?, ?)");
             ps.setString(1, message.name());
             ps.setString(2, message.message());

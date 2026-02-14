@@ -21,8 +21,6 @@ public class Main {
             systemProperties().
             load();
 
-    private static Connection conn = null;
-
     public static void main(String[] args) throws LifecycleException, URISyntaxException {
         String jarPath = Paths.get(
                 Main.class.getProtectionDomain().
@@ -75,14 +73,6 @@ public class Main {
     }
 
     public static Connection getConn() throws SQLException {
-        if (conn == null || !conn.isValid(1)) {
-            if (conn != null) conn.close();
-            conn = createConnection();
-        }
-        return conn;
-    }
-
-    public static Connection createConnection() throws SQLException {
         String jdbcUrl = dotenv.get("JDBC_URL");
         String dbUser = dotenv.get("DB_USER");
         String dbPassword = dotenv.get("DB_PASSWORD");
