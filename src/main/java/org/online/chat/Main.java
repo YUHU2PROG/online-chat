@@ -44,7 +44,7 @@ public class Main {
                             new File("target/classes").getAbsolutePath(), "/")
             );
         } else if (Objects.equals(dotenv.get("CONTEXT"), "prod")) {
-            ctx = tomcat.addWebapp(tomcat.getHost(), "", "/");
+            ctx = tomcat.addWebapp(tomcat.getHost(), "", new File(System.getProperty("java.io.tmpdir")).getAbsolutePath());
             resources = new StandardRoot(ctx);
             resources.addJarResources(
                     new JarResourceSet(
