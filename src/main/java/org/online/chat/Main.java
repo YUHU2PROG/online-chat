@@ -75,8 +75,10 @@ public class Main {
     }
 
     public static Connection getConn() throws SQLException {
-        if (conn == null || !conn.isValid(1)) conn = createConnection();
-        conn.close();
+        if (conn == null || !conn.isValid(1)) {
+            if (conn != null) conn.close();
+            conn = createConnection();
+        }
         return conn;
     }
 
